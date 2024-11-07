@@ -1,0 +1,117 @@
+.single-movie {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100dvh;
+    width: 100%;
+    z-index: 9;
+    background-color: white;
+  }
+  .modal-wraper{
+    background: linear-gradient(#5a90bc, #173d66);
+    display: flex;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    height: 70dvh;
+  position: relative;
+  }
+  
+  .single-movie-img{
+    width: 350px;
+    height: 350px;
+    border-radius: 8px;
+  }
+  
+  .play-section {
+    position: absolute;
+    left: 50px;
+    bottom: 100px;
+    button {
+      background-color: #c0c782;
+    }
+  }
+  
+    .play-btn {
+      display: flex;
+      align-items: center;
+      button {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 10px;
+        height: 50px;
+        width: 150px;
+      }
+      .play {
+        margin-right: 10px;
+        width: 15px;
+        height: 15px;
+      }
+      .favorite{
+        margin-left: 5px;
+        background: transparent;
+        width: 50px;
+        background-color: #73a4c7;
+        height: 50px;
+        border-radius: 50%;
+        border: none;
+        img {
+          height: 35px;
+        }
+      }
+    }
+    .informations {
+      margin-top: 50px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-size: 1rem;
+      transition: font-size 1s ease;
+      p{
+          width: 70%;
+      }
+    }
+  
+    .mehr {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 50px;
+      font-size: 1rem;
+      transition: font-size 1s ease;
+      p{
+          width: 70%;
+      }
+    }
+    
+    .modal-wraper {
+      transition: transform 1s ease, opacity 1s ease;
+    }
+    
+    .modal-wraper.shrink {
+      height: 50%;
+      opacity: 0.7; 
+    }
+    
+    .informations.focused {
+      font-size: 1.2rem; 
+      p{
+        font-size: 1.1rem;
+        font-weight: bolder;
+        width: 70%;
+      }
+    }
+    
+    .mehr.focused {
+      font-size: 1.1rem;
+      p{
+        font-size: 1.2rem;
+        font-weight: bolder;
+        width: 70%;
+  
+      }
+    }
+    
+    
+    

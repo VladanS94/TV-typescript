@@ -1,15 +1,30 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
-import { Button } from "./components/Button";
+import Home from "./pages/Home/Home";
+import Login from "./pages/LogIn/Login";
+import SignUp from "./pages/SignUp/SignUp";
+import { useLocalStorage } from "react-use";
 
 function App() {
-  const [name, setName] = useState("Vladan");
+  const [currentModal, setCurrentModal] = useState("login");
+  const [token] = useLocalStorage("token", null);
+
+  useEffect(() => {
+    if (token) {
+      setCurrentModal("home");
+    }
+  }, [token]);
   return (
     <div className="App">
-      <Button variant="error" size="md" onClick={() => setName("Andreja")}>
-        Promeni Ime
-      </Button>
-      <p>{name}</p>
+      {currentModal === "home" ? (
+        <Home setCurrentModal={setCurrentModal} />
+      ) : (
+        <Login setCurrentModal={setCurrentModal} />
+      )}
+
+      {currentModal === "sign-up" && (
+        <SignUp setCurrentModal={setCurrentModal} />
+      )}
     </div>
   );
 }

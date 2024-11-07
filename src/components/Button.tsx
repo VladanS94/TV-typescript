@@ -4,6 +4,7 @@ type ButtonProps = PropsWithChildren<{
   onClick?: () => void;
   variant: "primary" | "secondary" | "error";
   size: "sm" | "md" | "lg";
+  type?: "button" | "submit" | "reset";
 }>;
 
 export const Button = ({
@@ -33,6 +34,7 @@ export const Button = ({
     },
     lg: {
       padding: "1rem",
+      width: "100%",
     },
   };
 
@@ -41,8 +43,10 @@ export const Button = ({
       style={{
         outline: "none",
         border: "none",
+        color: "white",
         cursor: "pointer",
-        borderRadius: 10,
+        fontFamily: "sans-serif",
+        borderRadius: 7,
         ...variantStyles[variant],
         ...sizeStyles[size],
       }}
