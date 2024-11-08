@@ -11,8 +11,6 @@ const usePost = () => {
     async ({ url, payload }: { url: string; payload: LoginPayload }) => {
       const response = await axiosInstance.post(url, payload);
       setToken(response.data.token);
-      console.log(url, payload);
-
       return response.data;
     },
     {

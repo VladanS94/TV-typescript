@@ -7,6 +7,8 @@ import { useLocalStorage } from "react-use";
 
 function App() {
   const [currentModal, setCurrentModal] = useState("login");
+  const [activeMenuItem] = useState(0);
+
   const [token] = useLocalStorage("token", null);
 
   useEffect(() => {
@@ -17,13 +19,22 @@ function App() {
   return (
     <div className="App">
       {currentModal === "home" ? (
-        <Home setCurrentModal={setCurrentModal} />
+        <Home
+          setCurrentModal={setCurrentModal}
+          activeMenuItem={activeMenuItem}
+        />
       ) : (
-        <Login setCurrentModal={setCurrentModal} />
+        <SignUp
+          setCurrentModal={setCurrentModal}
+          activeMenuItem={activeMenuItem}
+        />
       )}
 
       {currentModal === "sign-up" && (
-        <SignUp setCurrentModal={setCurrentModal} />
+        <SignUp
+          setCurrentModal={setCurrentModal}
+          activeMenuItem={activeMenuItem}
+        />
       )}
     </div>
   );

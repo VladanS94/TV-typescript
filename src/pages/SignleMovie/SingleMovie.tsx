@@ -12,7 +12,7 @@ const SingleMoviePage = ({ movie, onClose, showModal, closeModal }: any) => {
   const discoverSectionRef = useRef<HTMLDivElement>(null);
 
   const handleKeyNavigation = useCallback(
-    (e: any) => {
+    (e: KeyboardEvent) => {
       if (e.key === "Escape" && showModal) {
         closeModal();
       }

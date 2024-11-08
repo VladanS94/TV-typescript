@@ -5,15 +5,13 @@ import { useRecoilState } from "recoil";
 import { focusState } from "../../state/atoms/FocusState";
 import SideMenu from "../../components/SideMenu/SideMenu";
 import "./Home.css";
+import { SideMenuProps } from "../../types/CurrentModalType";
 
 const apiKey = process.env.REACT_APP_API_KEY;
 
-const Home = ({ setCurrentModal }: any) => {
-  const [activeMenuItem] = useState(0);
+const Home = ({ setCurrentModal, activeMenuItem }: SideMenuProps) => {
   const [row, setRow] = useState(0);
   const [focus, setFocus] = useRecoilState(focusState);
-
-  // const { toggleMenu, focus, setFocus } = useUserContext();
 
   const { data: topRatedMovies } = useFetch(
     `https://api.themoviedb.org/3/movie/top_rated?api_key=${apiKey}`

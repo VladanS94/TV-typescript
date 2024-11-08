@@ -8,12 +8,13 @@ import {
   selectedItemState,
 } from "../../state/atoms/ActiveItemState";
 import { toggleMenu } from "../../utils/helpers";
+import { MovieType } from "../../types/MovieTypes";
 
 const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
   const [col, setCol] = useState(-1);
   const [showModal, setShowModal] = useState(false);
-  const [selectedMovie, setSelectedMovie] = useState(null);
-  const [movieID, setMovieID] = useState(null);
+  const [selectedMovie, setSelectedMovie] = useState<MovieType | null>(null);
+  const [movieID, setMovieID] = useState<MovieType | null>(null);
 
   const [focus, setFocus] = useRecoilState(focusState);
   const [activeMenuItem, setActiveMenuItem] = useRecoilState(activeMenuState);
@@ -21,7 +22,7 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
 
   const movieRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const openModal = (movie: any) => {
+  const openModal = (movie: MovieType) => {
     setSelectedMovie(movie);
     setShowModal(true);
     setMovieID(movie);
@@ -33,14 +34,14 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
   };
 
   useEffect(() => {
-    const handleKeyDown = (e: any) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (showModal) return;
       if (e.key === "ArrowDown") {
         row !== 2 && setRow(row + 1);
       } else if (e.key === "ArrowUp") {
         row !== 0 && setRow(row - 1);
       } else if (e.key === "ArrowRight") {
-        col < data.length - 1 && setCol(col + 1);
+        col < data.slice(0, 11).length - 1 && setCol(col + 1);
       } else if (e.key === "ArrowLeft") {
         col !== -1 && setCol(col - 1);
         if (col === 0) {
@@ -93,32 +94,34 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
   }, [focus, col]);
 
   return (
-    <div>
+    <div className="movie-wrapper">
       <h1>{title}</h1>
-      <div className="movie-list">
-        {/* <Stack orientation="horizontal"> */}
-        {data?.map((movie: any, index: number) => (
+      <Stack orientation="horizontal">
+        {data?.slice(0, 11).map((movie: MovieType, index: number) => (
           <div
             key={movie.id}
             ref={(el) => (movieRefs.current[index] = el)}
             style={{
               border:
                 isActiveRow && col === index ? "4px solid yellow" : "none",
-              padding: "3px",
               margin: "5px 0",
               display: "flex",
               alignItems: "center",
+              borderRadius: "10px",
+              scale: isActiveRow && col === index ? "1.1" : "none",
+              transition:
+                isActiveRow && col === index ? "0.2s ease-in" : "none",
             }}
             onClick={() => openModal(movie)}
           >
             <img
+              className="movie-img"
               src={`https://image.tmdb.org/t/p/w500${movie?.poster_path}`}
               alt={movie.title}
             />
           </div>
         ))}
-        {/* </Stack> */}
-      </div>
+      </Stack>
       {showModal && (
         <div className="modal">
           <SingleMovie

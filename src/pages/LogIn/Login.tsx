@@ -2,78 +2,28 @@ import React, { useState, useRef, useCallback, useEffect } from "react";
 import "./Login.css";
 import Loader from "../../components/Loader/Loader";
 import Keyboard from "../../components/Keyboard/Keyboard";
-import usePost from "../../hooks/usePost";
 import { Button } from "../../components/Button";
+import { SideMenuProps } from "../../types/CurrentModalType";
+import { useUserForm } from "../../utils/LoginHelper/useUserForm";
+import { useKeyboardToggle } from "../../utils/LoginHelper/useKeyboardToggle";
+import { useKeyboardNavigation } from "../../utils/LoginHelper/useKeyboardNavigation";
 
-const Login = ({ setCurrentModal }: any) => {
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
-  const [focusedInput, setFocusedInput] = useState("");
+const Login = ({ setCurrentModal }: SideMenuProps) => {
+  const { user, error, loading, handleInputChange, handleSubmit } =
+    useUserForm(setCurrentModal);
+  const { keyboardVisible, handleShowKeyboard } = useKeyboardToggle();
 
   const emailButtonRef = useRef<HTMLInputElement>(null);
   const passwordButtonRef = useRef<HTMLInputElement>(null);
   const loginButtonRef = useRef<HTMLButtonElement>(null);
   const signUpAccountRef = useRef<HTMLAnchorElement>(null);
 
-  const { logIn } = usePost();
-
-  const handleInputChange = (e: any) => {
-    const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-  };
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    setError("");
-    setLoading(true);
-
-    await logIn("/", user);
-
-    setUser({
-      email: "",
-      password: "",
-    });
-    setCurrentModal("home");
-  };
-
-  const handleKeyNavigation = useCallback((e: any) => {
-    if (e.key === "ArrowDown") {
-      if (document.activeElement === emailButtonRef.current) {
-        passwordButtonRef.current?.focus();
-      } else if (document.activeElement === passwordButtonRef.current) {
-        loginButtonRef.current?.focus();
-      } else if (document.activeElement === loginButtonRef.current) {
-        signUpAccountRef.current?.focus();
-      }
-    } else if (e.key === "ArrowUp") {
-      if (document.activeElement === signUpAccountRef.current) {
-        loginButtonRef.current?.focus();
-      } else if (document.activeElement === loginButtonRef.current) {
-        passwordButtonRef.current?.focus();
-      } else if (document.activeElement === passwordButtonRef.current) {
-        emailButtonRef.current?.focus();
-      }
-    }
-  }, []);
-
-  const handleShowKeyboard = (e: any) => {
-    if (e.key === "Enter") {
-      if (document.activeElement === emailButtonRef.current) {
-        setFocusedInput("email");
-      } else if (document.activeElement === passwordButtonRef.current) {
-        setFocusedInput("password");
-      }
-      setKeyboardVisible(true);
-    }
-    if (e.key === "Escape") {
-      setKeyboardVisible(false);
-    }
-  };
+  const { handleKeyNavigation } = useKeyboardNavigation({
+    emailButtonRef,
+    passwordButtonRef,
+    loginButtonRef,
+    signUpAccountRef,
+  });
 
   useEffect(() => {
     emailButtonRef.current?.focus();
@@ -81,7 +31,7 @@ const Login = ({ setCurrentModal }: any) => {
     return () => {
       window.removeEventListener("keydown", handleKeyNavigation);
     };
-  }, [handleKeyNavigation]);
+  }, []);
 
   return (
     <div className="login">
@@ -143,11 +93,7 @@ const Login = ({ setCurrentModal }: any) => {
           {/* <link>Forgot Password?</link> */}
         </div>
       )}
-      <Keyboard
-        show={keyboardVisible}
-        onClose={() => setKeyboardVisible(false)}
-        inputType={focusedInput}
-      />
+      <Keyboard show={keyboardVisible} />
     </div>
   );
 };

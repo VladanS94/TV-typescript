@@ -6,8 +6,11 @@ import { focusState } from "../../state/atoms/FocusState";
 import "./SideMenu.css";
 import { activeMenuState } from "../../state/atoms/ActiveItemState";
 import { toggleMenu } from "../../utils/helpers";
+import { SideMenuProps } from "../../types/CurrentModalType";
 
-const SideMenu = ({ setCurrentModal }: any) => {
+
+
+const SideMenu = ({ setCurrentModal }: SideMenuProps) => {
   const [focus, setFocus] = useRecoilState(focusState);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeMenuItem, setActiveMenuItem] = useRecoilState(activeMenuState);
@@ -23,7 +26,7 @@ const SideMenu = ({ setCurrentModal }: any) => {
   useEffect(() => {
     itemsRef.current[currentIndex]?.focus();
     if (focus === "sidemenu") {
-      const handleKeyDown = (e: any) => {
+      const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "ArrowDown") {
           setCurrentIndex((prevIndex) =>
             prevIndex < allItems.length - 1 ? prevIndex + 1 : prevIndex

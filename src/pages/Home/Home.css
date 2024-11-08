@@ -11,6 +11,12 @@
     overflow: hidden;
   }
   
+
+  .movie-img{
+    height: 200px;
+    width: 190px;
+    border-radius: 5px;
+  }
   .movie-list {
     display: flex;
     padding-bottom: 4px;
@@ -23,11 +29,6 @@
     overflow: hidden;
     flex-shrink: 0;
     cursor: pointer;
-    img {
-      height: 100%;
-      width: 100%;
-      display: block;
-      object-fit: cover;
-    }
+    
   }
   
