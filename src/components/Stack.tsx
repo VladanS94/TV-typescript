@@ -13,6 +13,7 @@ export default function Stack({
       display: "flex",
       flexDirection: "row",
       gap: "1rem",
+      overflow: "hidden",
     },
     vertical: {
       display: "flex",

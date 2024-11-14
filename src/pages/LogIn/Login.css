@@ -221,4 +221,18 @@ h2 {
     border: 1px solid #2d79f3;
     ;
   }
+  .focused {
+    border: 2px solid blue; 
+    border-radius: 4px;
+  }
+
+  .focused-input {
+    width: 100%;
+    border: 1.5px solid #ecedec;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+    transition: 0.2s ease-in-out;
+  }
   

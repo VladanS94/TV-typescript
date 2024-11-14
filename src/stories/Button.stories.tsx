@@ -8,30 +8,6 @@ type StoryProps = ComponentProps<typeof Button> & {
   buttonText: string;
 };
 
-const meta: Meta<StoryProps> = {
-  component: Button,
-  tags: ["autodocs"],
-  argTypes: {
-    variant: {
-      options: ["primary", "secondary", "error"],
-      control: {
-        type: "select",
-      },
-    },
-    size: {
-      options: ["sm", "md", "lg"],
-      control: {
-        type: "select",
-      },
-    },
-  },
-  args: {
-    onClick: fn(),
-  },
-};
-
-export default meta;
-
 type Story = StoryObj<StoryProps>;
 
 export const Primary: Story = {
@@ -65,3 +41,27 @@ export const Error: Story = {
     return <Button {...args}>{buttonText}</Button>;
   },
 };
+
+const meta: Meta<StoryProps> = {
+  component: Button,
+  tags: ["autodocs"],
+  argTypes: {
+    variant: {
+      options: ["primary", "secondary", "error"],
+      control: {
+        type: "select",
+      },
+    },
+    size: {
+      options: ["sm", "md", "lg"],
+      control: {
+        type: "select",
+      },
+    },
+  },
+  args: {
+    onClick: fn(),
+  },
+};
+
+export default meta;

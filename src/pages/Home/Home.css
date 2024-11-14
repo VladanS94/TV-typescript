@@ -7,7 +7,7 @@
   .right-side {
     flex-grow: 1;
     background-color: #95bdd6;
-    padding: 10px 50px 0;
+    padding: 10px 60px 0;
     overflow: hidden;
   }
   
@@ -29,6 +29,8 @@
     overflow: hidden;
     flex-shrink: 0;
     cursor: pointer;
-    
+  }
+  .smooth-scroll {
+    scroll-behavior: smooth;
   }
   

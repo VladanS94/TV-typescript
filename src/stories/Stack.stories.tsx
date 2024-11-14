@@ -7,6 +7,25 @@ type StoryProps = ComponentProps<typeof Stack> & {
   numberOfChildren: number;
 };
 
+type Story = StoryObj<StoryProps>;
+
+export const Horizontal: Story = {
+  args: {
+    orientation: "horizontal",
+  },
+  render: ({ numberOfChildren, ...args }) => {
+    return <Stack {...args}>{createChildren(numberOfChildren)}</Stack>;
+  },
+};
+
+export const Vertical: Story = {
+  args: {
+    orientation: "vertical",
+  },
+  render: ({ numberOfChildren, ...args }) => {
+    return <Stack {...args}>{createChildren(numberOfChildren)}</Stack>;
+  },
+};
 const meta: Meta<StoryProps> = {
   component: Stack,
   tags: ["autodocs"],
@@ -29,28 +48,6 @@ const meta: Meta<StoryProps> = {
   },
 };
 
-export default meta;
-
-type Story = StoryObj<StoryProps>;
-
-export const Horizontal: Story = {
-  args: {
-    orientation: "horizontal",
-  },
-  render: ({ numberOfChildren, ...args }) => {
-    return <Stack {...args}>{createChildren(numberOfChildren)}</Stack>;
-  },
-};
-
-export const Vertical: Story = {
-  args: {
-    orientation: "vertical",
-  },
-  render: ({ numberOfChildren, ...args }) => {
-    return <Stack {...args}>{createChildren(numberOfChildren)}</Stack>;
-  },
-};
-
 function createChildren(numberOfChildren: number) {
   return Array(numberOfChildren)
     .fill(null)
@@ -63,3 +60,5 @@ function createChildren(numberOfChildren: number) {
       );
     });
 }
+
+export default meta;

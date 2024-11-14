@@ -1,40 +1,80 @@
 import React, { useEffect, useState } from "react";
-import useFetch from "../../hooks/useFetch";
 import Movie from "../../components/Movie/Movie";
 import { useRecoilState } from "recoil";
-import { focusState } from "../../state/atoms/FocusState";
+import { focusMovieState, FocusStateEnum } from "../../state/atoms/FocusState";
 import SideMenu from "../../components/SideMenu/SideMenu";
 import "./Home.css";
 import { SideMenuProps } from "../../types/CurrentModalType";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 
 const apiKey = process.env.REACT_APP_API_KEY;
 
-const Home = ({ setCurrentModal, activeMenuItem }: SideMenuProps) => {
+const Home = ({ setActivePage, activePage }: SideMenuProps) => {
   const [row, setRow] = useState(0);
-  const [focus, setFocus] = useRecoilState(focusState);
+  const [focus, setFocus] = useRecoilState(focusMovieState);
 
-  const { data: topRatedMovies } = useFetch(
-    `https://api.themoviedb.org/3/movie/top_rated?api_key=${apiKey}`
-  );
-  const { data: horrorMovies } = useFetch(
-    `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&page=1?&with_genres=14`
-  );
-  const { data: popularMovies } = useFetch(
-    `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`
-  );
+  const {
+    data: topRatedMovies,
+    isLoading: isTopRated,
+    error: errorTopRated,
+  } = useQuery({
+    queryKey: ["topRatedMovies"],
+    queryFn: async () => {
+      const res = await axios.get(
+        `https://api.themoviedb.org/3/movie/top_rated?api_key=${apiKey}`
+      );
+      return res.data.results;
+    },
+  });
+  const {
+    data: horrorMovies,
+    isLoading: isLoadingHorror,
+    error: errorHorror,
+  } = useQuery({
+    queryKey: ["horrorMovies"],
+    queryFn: async () => {
+      const res = await axios.get(
+        `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&page=1?&with_genres=14`
+      );
+
+      return res.data.results;
+    },
+  });
+  const {
+    data: popularMovies,
+    isLoading: isPopular,
+    error: errorPopular,
+  } = useQuery({
+    queryKey: ["popularMovies"],
+    queryFn: async () => {
+      const res = await axios.get(
+        `https://api.themoviedb.org/3/movie/popular?api_key=${apiKey}`
+      );
+      return res.data.results;
+    },
+  });
 
   useEffect(() => {
-    if (focus === "movies") {
+    if (focus === FocusStateEnum.MOVIES) {
       setRow(0);
     }
   }, [focus]);
 
+  if (errorTopRated)
+    return (
+      <p>Error loading horror movies: {(errorTopRated as Error).message}</p>
+    );
+  if (errorHorror)
+    return <p>Error loading horror movies: {(errorHorror as Error).message}</p>;
+  if (errorPopular)
+    return (
+      <p>Error loading popular movies: {(errorPopular as Error).message}</p>
+    );
+
   return (
     <div className="home-page">
-      <SideMenu
-        activeMenuItem={activeMenuItem}
-        setCurrentModal={setCurrentModal}
-      />
+      <SideMenu activePage={activePage} setActivePage={setActivePage} />
 
       <div className="right-side">
         <Movie

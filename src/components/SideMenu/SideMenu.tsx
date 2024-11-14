@@ -1,31 +1,25 @@
 import React, { useEffect, useRef, useState } from "react";
 import { allItems } from "./side-menu-list";
-import { useLocalStorage } from "react-use";
 import { useRecoilState } from "recoil";
-import { focusState } from "../../state/atoms/FocusState";
+import { focusMovieState, FocusStateEnum } from "../../state/atoms/FocusState";
 import "./SideMenu.css";
 import { activeMenuState } from "../../state/atoms/ActiveItemState";
-import { toggleMenu } from "../../utils/helpers";
 import { SideMenuProps } from "../../types/CurrentModalType";
 
-
-
-const SideMenu = ({ setCurrentModal }: SideMenuProps) => {
-  const [focus, setFocus] = useRecoilState(focusState);
+const SideMenu = ({ setActivePage }: SideMenuProps) => {
+  const [focus, setFocus] = useRecoilState(focusMovieState);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [activeMenuItem, setActiveMenuItem] = useRecoilState(activeMenuState);
   const itemsRef = useRef<(HTMLLIElement | null)[]>([]);
 
-  const [token, setToken, removeToken] = useLocalStorage("token");
-
   const handleLogout = () => {
-    removeToken();
-    setCurrentModal("login");
+    localStorage.removeItem("token");
+    setActivePage("login");
   };
 
   useEffect(() => {
     itemsRef.current[currentIndex]?.focus();
-    if (focus === "sidemenu") {
+    if (focus === FocusStateEnum.SIDEMENU) {
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "ArrowDown") {
           setCurrentIndex((prevIndex) =>
@@ -36,8 +30,8 @@ const SideMenu = ({ setCurrentModal }: SideMenuProps) => {
             prevIndex > 0 ? prevIndex - 1 : prevIndex
           );
         } else if (e.key === "ArrowRight") {
-          setFocus("movies");
-          toggleMenu(setActiveMenuItem);
+          setFocus(FocusStateEnum.MOVIES);
+          setActiveMenuItem(!activeMenuItem);
         } else if (e.key === "Enter") {
           if (currentIndex === allItems.length - 1) {
             handleLogout();
@@ -62,7 +56,9 @@ const SideMenu = ({ setCurrentModal }: SideMenuProps) => {
             key={item.id}
             tabIndex={-1}
             ref={(el) => (itemsRef.current[index] = el)}
-            className={focus === "movies" ? "no-focus-visible" : ""}
+            className={
+              focus === FocusStateEnum.MOVIES ? "no-focus-visible" : ""
+            }
             onClick={index === allItems.length - 1 ? handleLogout : undefined}
           >
             <img

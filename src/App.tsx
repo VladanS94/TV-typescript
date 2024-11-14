@@ -3,38 +3,28 @@ import "./App.css";
 import Home from "./pages/Home/Home";
 import Login from "./pages/LogIn/Login";
 import SignUp from "./pages/SignUp/SignUp";
-import { useLocalStorage } from "react-use";
+import { activeToken } from "./state/atoms/tokenState";
+import { useRecoilState } from "recoil";
+import { activePageState } from "./state/atoms/activePageState";
 
 function App() {
-  const [currentModal, setCurrentModal] = useState("login");
-  const [activeMenuItem] = useState(0);
-
-  const [token] = useLocalStorage("token", null);
+  const [token] = useRecoilState(activeToken);
+  const [activePage, setActivePage] = useRecoilState(activePageState);
 
   useEffect(() => {
-    if (token) {
-      setCurrentModal("home");
+    if (!token) {
+      setActivePage("login");
     }
-  }, [token]);
+  }, []);
+
   return (
     <div className="App">
-      {currentModal === "home" ? (
-        <Home
-          setCurrentModal={setCurrentModal}
-          activeMenuItem={activeMenuItem}
-        />
+      {activePage === "home" ? (
+        <Home setActivePage={setActivePage} activePage={activePage} />
+      ) : activePage === "login" ? (
+        <Login setActivePage={setActivePage} activePage={activePage} />
       ) : (
-        <SignUp
-          setCurrentModal={setCurrentModal}
-          activeMenuItem={activeMenuItem}
-        />
-      )}
-
-      {currentModal === "sign-up" && (
-        <SignUp
-          setCurrentModal={setCurrentModal}
-          activeMenuItem={activeMenuItem}
-        />
+        <SignUp setActivePage={setActivePage} activePage={activePage} />
       )}
     </div>
   );

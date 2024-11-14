@@ -1,6 +1,11 @@
-import {atom} from 'recoil';
+import { atom } from "recoil";
 
-export const focusState = atom({
-    key: 'focusState',
-    default: 'sidemenu'
-})
+export enum FocusStateEnum {
+  SIDEMENU = "sidemenu",
+  MOVIES = "movies",
+}
+
+export const focusMovieState = atom<FocusStateEnum>({
+  key: "focusState",
+  default: FocusStateEnum.SIDEMENU,
+});

@@ -2,13 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import Stack from "../Stack";
 import SingleMovie from "../../pages/SignleMovie/SingleMovie";
 import { useRecoilState } from "recoil";
-import { focusState } from "../../state/atoms/FocusState";
+import { focusMovieState, FocusStateEnum } from "../../state/atoms/FocusState";
 import {
   activeMenuState,
   selectedItemState,
 } from "../../state/atoms/ActiveItemState";
-import { toggleMenu } from "../../utils/helpers";
-import { MovieType } from "../../types/MovieTypes";
+
+interface MovieType {
+  title: string;
+  id: number;
+  img: string;
+  poster_path: string;
+}
 
 const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
   const [col, setCol] = useState(-1);
@@ -16,7 +21,7 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
   const [selectedMovie, setSelectedMovie] = useState<MovieType | null>(null);
   const [movieID, setMovieID] = useState<MovieType | null>(null);
 
-  const [focus, setFocus] = useRecoilState(focusState);
+  const [focus, setFocus] = useRecoilState(focusMovieState);
   const [activeMenuItem, setActiveMenuItem] = useRecoilState(activeMenuState);
   const [selectedItem, setSelectedItem] = useRecoilState(selectedItemState);
 
@@ -36,17 +41,28 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (showModal) return;
+
       if (e.key === "ArrowDown") {
         row !== 2 && setRow(row + 1);
       } else if (e.key === "ArrowUp") {
         row !== 0 && setRow(row - 1);
       } else if (e.key === "ArrowRight") {
-        col < data.slice(0, 11).length - 1 && setCol(col + 1);
+        if (col < data.length - 1) {
+          setCol((prev) => (prev < data.length - 1 ? prev + 1 : prev));
+          if (col >= 2 && col < data.length - 3) {
+            setCol(col + 1);
+          }
+        }
       } else if (e.key === "ArrowLeft") {
-        col !== -1 && setCol(col - 1);
+        if (col > 0) {
+          setCol((prev) => (prev > 0 ? prev - 1 : prev));
+          if (col <= data.length - 3 && col > 2) {
+            setCol(col - 1);
+          }
+        }
         if (col === 0) {
-          setFocus("sidemenu");
-          toggleMenu(setActiveMenuItem);
+          setFocus(FocusStateEnum.SIDEMENU);
+          setActiveMenuItem(!activeMenuItem);
         }
       } else if (e.key === "Enter") {
         openModal(data[col]);
@@ -55,7 +71,7 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
       }
     };
 
-    if (isActiveRow && focus === "movies") {
+    if (isActiveRow && focus === FocusStateEnum.MOVIES) {
       window.addEventListener("keydown", handleKeyDown);
     } else {
       window.removeEventListener("keydown", handleKeyDown);
@@ -69,7 +85,6 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
     row,
     isActiveRow,
     focus,
-    toggleMenu,
     setRow,
     setFocus,
     data,
@@ -78,7 +93,11 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
   ]);
 
   useEffect(() => {
-    if (focus === "movies" && isActiveRow && movieRefs.current[col]) {
+    if (
+      focus === FocusStateEnum.MOVIES &&
+      isActiveRow &&
+      movieRefs.current[col]
+    ) {
       movieRefs.current[col]!.scrollIntoView({
         behavior: "smooth",
         block: "center",
@@ -88,8 +107,11 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
   }, [isActiveRow, col, row, focus]);
 
   useEffect(() => {
-    if (focus === "movies" && col === -1) {
+    if (focus === FocusStateEnum.MOVIES && col === -1) {
       setCol(0);
+    }
+    if (focus === FocusStateEnum.SIDEMENU) {
+      setCol(-1);
     }
   }, [focus, col]);
 
@@ -97,7 +119,7 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
     <div className="movie-wrapper">
       <h1>{title}</h1>
       <Stack orientation="horizontal">
-        {data?.slice(0, 11).map((movie: MovieType, index: number) => (
+        {data?.map((movie: MovieType, index: number) => (
           <div
             key={movie.id}
             ref={(el) => (movieRefs.current[index] = el)}
@@ -105,12 +127,13 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
               border:
                 isActiveRow && col === index ? "4px solid yellow" : "none",
               margin: "5px 0",
-              display: "flex",
+              display:
+                index >= Math.max(0, col - 3) && index < col + 9
+                  ? "flex"
+                  : "none",
               alignItems: "center",
               borderRadius: "10px",
-              scale: isActiveRow && col === index ? "1.1" : "none",
-              transition:
-                isActiveRow && col === index ? "0.2s ease-in" : "none",
+              scale: isActiveRow && col === index ? "1.01" : "none",
             }}
             onClick={() => openModal(movie)}
           >

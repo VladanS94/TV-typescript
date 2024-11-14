@@ -4,11 +4,13 @@ import { Link } from "react-router-dom";
 import Keyboard from "../../components/Keyboard/Keyboard";
 import { Button } from "../../components/Button";
 import { SideMenuProps } from "../../types/CurrentModalType";
-import { useUserForm } from "../../utils/SignUpHelper/useUserForm";
-import { useKeyboardNavigation } from "../../utils/SignUpHelper/useKeyboardNavigation";
+import { useUserForm } from "../../hooks/SignUpHelper/useUserForm";
+import { useKeyboardNavigation } from "../../hooks/SignUpHelper/useKeyboardNavigation";
+import { useKeyboardToggle } from "../../hooks/LoginHelper/useKeyboardToggle";
 
-const SignUp = ({ setCurrentModal }: SideMenuProps) => {
-  const { user, handleChange, handleSubmit } = useUserForm(setCurrentModal);
+const SignUp = ({ setActivePage }: SideMenuProps) => {
+  const { user, handleChange, handleSubmit } = useUserForm(setActivePage);
+  const { keyboardVisible, handleShowKeyboard } = useKeyboardToggle();
 
   const emailButtonRef = useRef<HTMLInputElement>(null);
   const passwordButtonRef = useRef<HTMLInputElement>(null);
@@ -60,11 +62,6 @@ const SignUp = ({ setCurrentModal }: SideMenuProps) => {
             />
           </div>
 
-          {/* {error && (
-            <h3 className="error-message" style={{ color: "red" }}>
-              {error}
-            </h3>
-          )} */}
           <Button type="submit" variant="primary" size="lg">
             Sign Up
           </Button>
@@ -75,11 +72,7 @@ const SignUp = ({ setCurrentModal }: SideMenuProps) => {
         {/* <link>Forgot Password?</link> */}
       </div>
 
-      {/* <Keyboard
-  show={keyboardVisible}
-  onClose={() => setKeyboardVisible(false)}
-  inputType={focusedInput}
-/> */}
+      <Keyboard show={keyboardVisible} />
     </div>
   );
 };

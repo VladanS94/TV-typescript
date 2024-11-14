@@ -1,4 +1,3 @@
-// hooks/useKeyboardToggle.ts
 import { useState } from "react";
 
 export const useKeyboardToggle = () => {

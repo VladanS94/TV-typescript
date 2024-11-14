@@ -1,4 +1,4 @@
 export interface SideMenuProps {
-  setCurrentModal: React.Dispatch<React.SetStateAction<string>>;
-  activeMenuItem: number;
+  setActivePage: React.Dispatch<React.SetStateAction<string>>;
+  activePage: string;
 }

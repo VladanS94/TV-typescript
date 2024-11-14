@@ -1,6 +1,9 @@
 import keyboard from "../../assets/keyboard.png";
-import { KeyboardType } from "../../types/KeyboardType";
 import "./Keyboard.css";
+
+interface KeyboardType {
+  show: true | false;
+}
 
 const Keyboard = ({ show }: KeyboardType) => {
   if (!show) return null;
