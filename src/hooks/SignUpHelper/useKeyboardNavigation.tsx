@@ -1,38 +1,26 @@
-import { useCallback } from "react";
+import { useEffect } from "react";
 
-export const useKeyboardNavigation = (refs: {
-  emailButtonRef: React.RefObject<HTMLInputElement>;
-  passwordButtonRef: React.RefObject<HTMLInputElement>;
-  signupButtonRef: React.RefObject<HTMLButtonElement>;
-  logInButtonRef: React.RefObject<HTMLInputElement>;
-}) => {
-  const handleKeyNavigation = useCallback(
-    (e: KeyboardEvent) => {
-      const {
-        emailButtonRef,
-        passwordButtonRef,
-        signupButtonRef,
-        logInButtonRef,
-      } = refs;
-
+export const useKeyboardNavigation = (
+  row: number,
+  col: number,
+  setRow: React.Dispatch<React.SetStateAction<number>>,
+  setCol: React.Dispatch<React.SetStateAction<number>>,
+  setActivePage: (page: string) => void
+) => {
+  useEffect(() => {
+    const handleKeyNavigation = (e: KeyboardEvent) => {
       if (e.key === "ArrowDown") {
-        if (document.activeElement === emailButtonRef.current) {
-          passwordButtonRef.current?.focus();
-        } else if (document.activeElement === passwordButtonRef.current) {
-          signupButtonRef.current?.focus();
-        } else if (document.activeElement === signupButtonRef.current) {
-          logInButtonRef.current?.focus();
-        }
+        setRow((prevRow) => Math.min(prevRow + 1, 3));
       } else if (e.key === "ArrowUp") {
-        if (document.activeElement === signupButtonRef.current) {
-          passwordButtonRef.current?.focus();
-        } else if (document.activeElement === passwordButtonRef.current) {
-          emailButtonRef.current?.focus();
-        }
+        setRow((prevRow) => Math.max(prevRow - 1, 0));
+      } else if (e.key === "Enter" && row === 3) {
+        setActivePage("login");
       }
-    },
-    [refs]
-  );
+    };
 
-  return { handleKeyNavigation };
+    window.addEventListener("keydown", handleKeyNavigation);
+    return () => {
+      window.removeEventListener("keydown", handleKeyNavigation);
+    };
+  }, [col, row, setRow, setCol, setActivePage]);
 };

@@ -222,8 +222,12 @@ h2 {
     ;
   }
   .focused {
-    border: 2px solid blue; 
+    border: 2px solid #007bff; 
     border-radius: 4px;
+    color: #0056b3;
+  }
+  .not-focused{
+    color: #0056b3;
   }
 
   .focused-input {

@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Stack from "../Stack";
 import SingleMovie from "../../pages/SignleMovie/SingleMovie";
 import { useRecoilState } from "recoil";
 import { focusMovieState, FocusStateEnum } from "../../state/atoms/FocusState";
-import {
-  activeMenuState,
-  selectedItemState,
-} from "../../state/atoms/ActiveItemState";
+import "./Movie.css";
+import { useMovieNavigation } from "../../hooks/MovieHelper/useMovieNavigation";
 
 interface MovieType {
   title: string;
@@ -16,16 +14,10 @@ interface MovieType {
 }
 
 const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
-  const [col, setCol] = useState(-1);
-  const [showModal, setShowModal] = useState(false);
   const [selectedMovie, setSelectedMovie] = useState<MovieType | null>(null);
   const [movieID, setMovieID] = useState<MovieType | null>(null);
 
   const [focus, setFocus] = useRecoilState(focusMovieState);
-  const [activeMenuItem, setActiveMenuItem] = useRecoilState(activeMenuState);
-  const [selectedItem, setSelectedItem] = useRecoilState(selectedItemState);
-
-  const movieRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   const openModal = (movie: MovieType) => {
     setSelectedMovie(movie);
@@ -38,59 +30,8 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
     setSelectedMovie(null);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (showModal) return;
-
-      if (e.key === "ArrowDown") {
-        row !== 2 && setRow(row + 1);
-      } else if (e.key === "ArrowUp") {
-        row !== 0 && setRow(row - 1);
-      } else if (e.key === "ArrowRight") {
-        if (col < data.length - 1) {
-          setCol((prev) => (prev < data.length - 1 ? prev + 1 : prev));
-          if (col >= 2 && col < data.length - 3) {
-            setCol(col + 1);
-          }
-        }
-      } else if (e.key === "ArrowLeft") {
-        if (col > 0) {
-          setCol((prev) => (prev > 0 ? prev - 1 : prev));
-          if (col <= data.length - 3 && col > 2) {
-            setCol(col - 1);
-          }
-        }
-        if (col === 0) {
-          setFocus(FocusStateEnum.SIDEMENU);
-          setActiveMenuItem(!activeMenuItem);
-        }
-      } else if (e.key === "Enter") {
-        openModal(data[col]);
-      } else if (e.key === "Escape" && showModal) {
-        closeModal();
-      }
-    };
-
-    if (isActiveRow && focus === FocusStateEnum.MOVIES) {
-      window.addEventListener("keydown", handleKeyDown);
-    } else {
-      window.removeEventListener("keydown", handleKeyDown);
-    }
-
-    return () => {
-      window.removeEventListener("keydown", handleKeyDown);
-    };
-  }, [
-    col,
-    row,
-    isActiveRow,
-    focus,
-    setRow,
-    setFocus,
-    data,
-    showModal,
-    setSelectedItem,
-  ]);
+  const { col, setCol, showModal, setShowModal, movieRefs } =
+    useMovieNavigation(data, row, setRow, isActiveRow, openModal);
 
   useEffect(() => {
     if (
@@ -117,7 +58,7 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
 
   return (
     <div className="movie-wrapper">
-      <h1>{title}</h1>
+      <h1 className="movie-title">{title}</h1>
       <Stack orientation="horizontal">
         {data?.map((movie: MovieType, index: number) => (
           <div
@@ -126,7 +67,6 @@ const Movie = ({ data, title, row, setRow, isActiveRow }: any) => {
             style={{
               border:
                 isActiveRow && col === index ? "4px solid yellow" : "none",
-              margin: "5px 0",
               display:
                 index >= Math.max(0, col - 3) && index < col + 9
                   ? "flex"

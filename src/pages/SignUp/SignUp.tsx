@@ -1,36 +1,33 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./SignUp.css";
-import { Link } from "react-router-dom";
-import Keyboard from "../../components/Keyboard/Keyboard";
 import { Button } from "../../components/Button";
 import { SideMenuProps } from "../../types/CurrentModalType";
 import { useUserForm } from "../../hooks/SignUpHelper/useUserForm";
 import { useKeyboardNavigation } from "../../hooks/SignUpHelper/useKeyboardNavigation";
-import { useKeyboardToggle } from "../../hooks/LoginHelper/useKeyboardToggle";
 
 const SignUp = ({ setActivePage }: SideMenuProps) => {
+  const [col, setCol] = useState(0);
+  const [row, setRow] = useState(0);
   const { user, handleChange, handleSubmit } = useUserForm(setActivePage);
-  const { keyboardVisible, handleShowKeyboard } = useKeyboardToggle();
 
   const emailButtonRef = useRef<HTMLInputElement>(null);
   const passwordButtonRef = useRef<HTMLInputElement>(null);
   const signupButtonRef = useRef<HTMLButtonElement>(null);
   const logInButtonRef = useRef<HTMLInputElement>(null);
 
-  const { handleKeyNavigation } = useKeyboardNavigation({
-    emailButtonRef,
-    passwordButtonRef,
-    signupButtonRef,
-    logInButtonRef,
-  });
+  useKeyboardNavigation(row, col, setRow, setCol, setActivePage);
 
   useEffect(() => {
-    emailButtonRef.current?.focus();
-    window.addEventListener("keydown", handleKeyNavigation);
-    return () => {
-      window.removeEventListener("keydown", handleKeyNavigation);
-    };
-  }, []);
+    if (row === 0) {
+      emailButtonRef.current?.focus();
+    } else if (row === 1) {
+      passwordButtonRef.current?.focus();
+    } else if (row === 2) {
+      signupButtonRef.current?.focus();
+    } else if (row === 3) {
+      logInButtonRef.current?.focus();
+    }
+  }, [row, col]);
 
   return (
     <div className="signup">
@@ -62,17 +59,27 @@ const SignUp = ({ setActivePage }: SideMenuProps) => {
             />
           </div>
 
-          <Button type="submit" variant="primary" size="lg">
+          <Button
+            type="submit"
+            variant="primary"
+            size="lg"
+            ref={signupButtonRef}
+          >
             Sign Up
           </Button>
         </form>
         <p className="p">
-          Don't have an account? <span className="span">Log In</span>
-        </p>
-        {/* <link>Forgot Password?</link> */}
+          Don't have an account?{" "}
+          <span
+            className={`forgot-password ${
+              row === 3 ? "focused" : "not-focused"
+            }`}
+            ref={logInButtonRef}
+          >
+            Log In
+          </span>
+        </p>{" "}
       </div>
-
-      <Keyboard show={keyboardVisible} />
     </div>
   );
 };

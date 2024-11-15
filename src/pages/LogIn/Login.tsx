@@ -1,19 +1,17 @@
 import React, { useRef, useEffect, useState } from "react";
 import "./Login.css";
 import Loader from "../../components/Loader/Loader";
-import Keyboard from "../../components/Keyboard/Keyboard";
 import { SideMenuProps } from "../../types/CurrentModalType";
-import { useKeyboardToggle } from "../../hooks/LoginHelper/useKeyboardToggle";
 import { useUserForm } from "../../hooks/LoginHelper/useUserForm";
 import { Button } from "../../components/Button";
+import { useKeyboardNavigation } from "../../hooks/LoginHelper/useKeyboardNavigation";
 
 const Login = ({ setActivePage }: SideMenuProps) => {
   const [col, setCol] = useState(0);
   const [row, setRow] = useState(0);
 
-  const { user, loading, handleInputChange, handleSubmit } =
+  const { user, error, loading, handleInputChange, handleSubmit } =
     useUserForm(setActivePage);
-  // const { keyboardVisible, handleShowKeyboard } = useKeyboardToggle();
 
   const emailButtonRef = useRef<HTMLInputElement>(null);
   const passwordButtonRef = useRef<HTMLInputElement>(null);
@@ -22,30 +20,9 @@ const Login = ({ setActivePage }: SideMenuProps) => {
   const loginButtonRef = useRef<HTMLButtonElement>(null);
   const signUpAccountRef = useRef<HTMLSpanElement>(null);
 
-  useEffect(() => {
-    const handleKeyNavigation = (e: KeyboardEvent) => {
-      if (e.key === "ArrowDown") {
-        setRow((prevRow) => Math.min(prevRow + 1, 4));
-      } else if (e.key === "ArrowUp") {
-        setRow((prevRow) => Math.max(prevRow - 1, 0));
-      } else if (e.key === "ArrowRight" && row === 2) {
-        setCol((prevCol) => Math.min(prevCol + 1, 1));
-      } else if (e.key === "ArrowLeft" && row === 2) {
-        setCol((prevCol) => Math.max(prevCol - 1, 0));
-      }
-
-      console.log(col, row);
-    };
-
-    window.addEventListener("keydown", handleKeyNavigation);
-    return () => {
-      window.removeEventListener("keydown", handleKeyNavigation);
-    };
-  }, [col, row]);
+  useKeyboardNavigation(row, col, setRow, setCol, setActivePage, rememberMeRef);
 
   useEffect(() => {
-    console.log("Focusing:", { row, col });
-
     if (row === 0) {
       emailButtonRef.current?.focus();
     } else if (row === 1) {
@@ -112,15 +89,22 @@ const Login = ({ setActivePage }: SideMenuProps) => {
                 <input type="radio" ref={rememberMeRef} />
                 <label>Remember me </label>
               </div>
-              <span
-                className={`forgot-password ${
-                  row === 2 && col === 1 ? "focused" : ""
-                }`}
-                ref={forgotPassRef}
-              >
-                Forgot password?
-              </span>
+              <div>
+                <span
+                  className={`forgot-password ${
+                    row === 2 && col === 1 ? "focused" : ""
+                  }`}
+                  ref={forgotPassRef}
+                >
+                  Forgot password?
+                </span>
+              </div>
             </div>
+            {error && (
+              <h3 className="error-message" style={{ color: "red" }}>
+                {error}
+              </h3>
+            )}
 
             <Button
               type="submit"
@@ -134,7 +118,9 @@ const Login = ({ setActivePage }: SideMenuProps) => {
           <p className="p">
             Don't have an account?{" "}
             <span
-              className={`forgot-password ${row === 4 ? "focused" : ""}`}
+              className={`forgot-password ${
+                row === 4 ? "focused" : "not-focused"
+              }`}
               ref={signUpAccountRef}
             >
               Sign Up
